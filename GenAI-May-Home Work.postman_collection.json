@@ -1,0 +1,225 @@
+{
+  "info": {
+    "_postman_id": "74d66221-9c92-403f-bb25-a35f0a60cc97",
+    "name": "GenAI-May-Home Work",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54395317",
+    "_collection_link": "https://go.postman.co/collection/54395317-74d66221-9c92-403f-bb25-a35f0a60cc97?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "S01 - DOM to Selenium Code-HW",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Extract the below given DOM : \\n\\n<input type=\\\"text\\\" class=\\\"inputBox\\\" name=\\\"companyName\\\" size=\\\"30\\\" maxlength=\\\"100\\\" id=\\\"createLeadForm_companyName\\\">\\n<input type=\\\"text\\\" class=\\\"inputBox\\\" name=\\\"lastName\\\" size=\\\"30\\\" maxlength=\\\"100\\\" id=\\\"createLeadForm_lastName\\\">\\n<input type=\\\"text\\\" class=\\\"inputBox\\\" name=\\\"firstName\\\" size=\\\"30\\\" maxlength=\\\"100\\\" id=\\\"createLeadForm_firstName\\\">\\n<input type=\\\"submit\\\" class=\\\"smallSubmit\\\" name=\\\"submitButton\\\" value=\\\"Create Lead\\\" id=\\\"ext-gen630\\\"> and provide me the selenium java code. Instructions: Do not use ID if the value has number in it. Provide only java code and no explanations needed\"\n    }\n  ],\n  \"model\": \"meta-llama/llama-4-scout-17b-16e-instruct\",\n  \"temperature\": 0.1,\n  \"include_reasoning\":true\n}\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://api.groq.com/openai/v1/chat/completions",
+          "protocol": "https",
+          "host": [
+            "api",
+            "groq",
+            "com"
+          ],
+          "path": [
+            "openai",
+            "v1",
+            "chat",
+            "completions"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "S02 - TextFromImage-Url-HW",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"model\": \"meta-llama/llama-4-scout-17b-16e-instruct\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"This is a image. Extract and return only the text exactly as shown, preserving case.\"\n        },\n        {\n          \"type\": \"image_url\",\n          \"image_url\": {\n            \"url\": \"https://m.media-amazon.com/images/I/71S5VX9v70L._SX3000_.jpg\"\n          }\n        }\n      ]\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://api.groq.com/openai/v1/chat/completions",
+          "protocol": "https",
+          "host": [
+            "api",
+            "groq",
+            "com"
+          ],
+          "path": [
+            "openai",
+            "v1",
+            "chat",
+            "completions"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "S03-WebSearch-HW",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"model\": \"groq/compound-mini\",\n  \"messages\": [\n    {\n        \"role\": \"user\",\n      \"content\": \"weather in chennai for jan 11 2026 --Only the temperatue for the date asked no probability or text and source from web with link no extrat text or markdown Give accurately with Web search no Halluciantion \"\n    }\n  ]\n}\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://api.groq.com/openai/v1/chat/completions",
+          "protocol": "https",
+          "host": [
+            "api",
+            "groq",
+            "com"
+          ],
+          "path": [
+            "openai",
+            "v1",
+            "chat",
+            "completions"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "S04- MultiLingual-HW",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are an API Specialist. Always respond in the same language as the user.\"},\n    {\"role\": \"user\", \"content\": \"மிகவும் நன்றி! இந்த API-ஐ எப்படி பயன்படுத்துவது என்று சொல்லுங்கள்.\"}\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://api.groq.com/openai/v1/chat/completions",
+          "protocol": "https",
+          "host": [
+            "api",
+            "groq",
+            "com"
+          ],
+          "path": [
+            "openai",
+            "v1",
+            "chat",
+            "completions"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "S05 - Meeting Transcriptions",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "https://api.groq.com/openai/v1/chat/completions",
+          "protocol": "https",
+          "host": [
+            "api",
+            "groq",
+            "com"
+          ],
+          "path": [
+            "openai",
+            "v1",
+            "chat",
+            "completions"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "S06 - Test case from User stories",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "https://api.groq.com/openai/v1/chat/completions",
+          "protocol": "https",
+          "host": [
+            "api",
+            "groq",
+            "com"
+          ],
+          "path": [
+            "openai",
+            "v1",
+            "chat",
+            "completions"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "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",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUri",
+      "value": ""
+    }
+  ]
+}
