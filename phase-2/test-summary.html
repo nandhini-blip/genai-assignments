@@ -1,0 +1,493 @@
+<title>AI-Shield — Test Report</title>
+<style>
+  :root {
+    --ink: #f4f6f5;
+    --ink-dim: #aeb8b6;
+    --paper: #0b0f14;
+    --paper-raised: #10161d;
+    --line: #202a33;
+    --brand: #4fb3a3;
+    --brand-dim: #2c6b60;
+    --pass: #5cb86a;
+    --pass-bg: rgba(92,184,106,0.12);
+    --block: #e0685a;
+    --block-bg: rgba(224,104,90,0.12);
+    --mask: #d9a94e;
+    --mask-bg: rgba(217,169,78,0.12);
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: -apple-system, "Segoe UI", ui-sans-serif, Roboto, Helvetica, Arial, sans-serif;
+  }
+  :root[data-theme="light"] {
+    --ink: #10161d;
+    --ink-dim: #55625e;
+    --paper: #f2f4f2;
+    --paper-raised: #ffffff;
+    --line: #d7ddda;
+    --brand: #2c7d6f;
+    --brand-dim: #dcefeb;
+    --pass: #1f7a34;
+    --pass-bg: #e4f4e6;
+    --block: #a83226;
+    --block-bg: #fbe6e3;
+    --mask: #93690f;
+    --mask-bg: #f8ecd6;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --ink: #10161d;
+      --ink-dim: #55625e;
+      --paper: #f2f4f2;
+      --paper-raised: #ffffff;
+      --line: #d7ddda;
+      --brand: #2c7d6f;
+      --brand-dim: #dcefeb;
+      --pass: #1f7a34;
+      --pass-bg: #e4f4e6;
+      --block: #a83226;
+      --block-bg: #fbe6e3;
+      --mask: #93690f;
+      --mask-bg: #f8ecd6;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+
+  /* ---- header ---- */
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 36px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brand);
+  }
+  h1 {
+    font-family: var(--mono);
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .meta {
+    font-size: 13px;
+    color: var(--ink-dim);
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .meta b { color: var(--ink); font-weight: 600; }
+
+  /* ---- summary tiles ---- */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+  .tile {
+    background: var(--paper-raised);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .tile .num {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--pass);
+  }
+  .tile .label {
+    font-size: 12px;
+    color: var(--ink-dim);
+    letter-spacing: 0.02em;
+  }
+
+  section { margin-bottom: 44px; }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  h2 {
+    font-family: var(--mono);
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .section-note {
+    font-size: 13px;
+    color: var(--ink-dim);
+  }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 13.5px; }
+  thead th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-dim);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper-raised);
+    position: sticky;
+    top: 0;
+  }
+  tbody td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--paper-raised); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); }
+  td.mono, .mono-cell { font-family: var(--mono); font-size: 13px; }
+  .group-row td {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--brand);
+    background: var(--paper-raised);
+    padding-top: 10px;
+    padding-bottom: 6px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 100px;
+    letter-spacing: 0.02em;
+  }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; }
+  .chip.pass { color: var(--pass); background: var(--pass-bg); }
+  .chip.pass::before { background: var(--pass); }
+  .chip.block { color: var(--block); background: var(--block-bg); }
+  .chip.block::before { background: var(--block); }
+  .chip.mask { color: var(--mask); background: var(--mask-bg); }
+  .chip.mask::before { background: var(--mask); }
+
+  .bar-track {
+    position: relative;
+    width: 64px;
+    height: 6px;
+    background: var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  .bar-fill { position: absolute; inset: 0; background: var(--brand); border-radius: 4px; }
+  .bar-fill.low { background: var(--mask); }
+
+  .cov-cell { display: flex; align-items: center; }
+
+  .notes {
+    display: grid;
+    gap: 10px;
+  }
+  .note {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--mask);
+    background: var(--paper-raised);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    color: var(--ink-dim);
+  }
+  .note b { color: var(--ink); font-weight: 600; }
+  .note.info { border-left-color: var(--brand); }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--ink-dim);
+    font-family: var(--mono);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 560px) {
+    h1 { font-size: 24px; }
+    .wrap { padding: 32px 16px 64px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">AI-Shield Moderation API &mdash; Test Report</div>
+    <h1>Unit + API Integration Run</h1>
+    <div class="meta">Executed <b>2026-07-07</b> &middot; Jest v30.4.2 (ts-jest) &middot; Newman v6.2.2 against <b>http://localhost:4000</b></div>
+  </header>
+
+  <div class="tiles">
+    <div class="tile">
+      <div class="num">38/38</div>
+      <div class="label">Unit tests passed</div>
+    </div>
+    <div class="tile">
+      <div class="num">8/8</div>
+      <div class="label">Unit suites passed</div>
+    </div>
+    <div class="tile">
+      <div class="num">25/25</div>
+      <div class="label">API requests passed</div>
+    </div>
+    <div class="tile">
+      <div class="num">43/43</div>
+      <div class="label">API assertions passed</div>
+    </div>
+    <div class="tile">
+      <div class="num">100%</div>
+      <div class="label">Line &amp; statement coverage</div>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-head">
+      <h2>Unit Tests &mdash; Jest (src/detectors, src/engine)</h2>
+      <div class="section-note">8 suites &middot; 38 tests &middot; 26.6s &middot; run via <span class="mono-cell">npm test -- --coverage</span></div>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th class="num">Tests</th>
+            <th class="num">Stmts</th>
+            <th>Branch</th>
+            <th class="num">Funcs</th>
+            <th class="num">Lines</th>
+            <th>Uncovered</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">config/loader.ts</td>
+            <td class="num">&mdash;</td>
+            <td class="num">100%</td>
+            <td><div class="cov-cell"><span class="bar-track"><span class="bar-fill" style="width:100%"></span></span>100%</div></td>
+            <td class="num">100%</td>
+            <td class="num">100%</td>
+            <td class="mono">&mdash;</td>
+          </tr>
+          <tr>
+            <td class="mono">detectors/base.detector.ts</td>
+            <td class="num">&mdash;</td>
+            <td class="num">100%</td>
+            <td><div class="cov-cell"><span class="bar-track"><span class="bar-fill" style="width:100%"></span></span>100%</div></td>
+            <td class="num">100%</td>
+            <td class="num">100%</td>
+            <td class="mono">&mdash;</td>
+          </tr>
+          <tr>
+            <td class="mono">detectors/pii.detector.ts</td>
+            <td class="num">5</td>
+            <td class="num">100%</td>
+            <td><div class="cov-cell"><span class="bar-track"><span class="bar-fill low" style="width:75%"></span></span>75%</div></td>
+            <td class="num">100%</td>
+            <td class="num">100%</td>
+            <td class="mono">12, 18, 39</td>
+          </tr>
+          <tr>
+            <td class="mono">detectors/cii.detector.ts</td>
+            <td class="num">4</td>
+            <td class="num">100%</td>
+            <td><div class="cov-cell"><span class="bar-track"><span class="bar-fill low" style="width:79%"></span></span>78.9%</div></td>
+            <td class="num">100%</td>
+            <td class="num">100%</td>
+            <td class="mono">12&ndash;14, 18, 50</td>
+          </tr>
+          <tr>
+            <td class="mono">detectors/secret.detector.ts</td>
+            <td class="num">4</td>
+            <td class="num">100%</td>
+            <td><div class="cov-cell"><span class="bar-track"><span class="bar-fill low" style="width:73%"></span></span>72.7%</div></td>
+            <td class="num">100%</td>
+            <td class="num">100%</td>
+            <td class="mono">12&ndash;14, 18</td>
+          </tr>
+          <tr>
+            <td class="mono">detectors/toxic.detector.ts</td>
+            <td class="num">4</td>
+            <td class="num">100%</td>
+            <td><div class="cov-cell"><span class="bar-track"><span class="bar-fill low" style="width:75%"></span></span>75%</div></td>
+            <td class="num">100%</td>
+            <td class="num">100%</td>
+            <td class="mono">12&ndash;14, 18, 33</td>
+          </tr>
+          <tr>
+            <td class="mono">detectors/injection.detector.ts</td>
+            <td class="num">4</td>
+            <td class="num">100%</td>
+            <td><div class="cov-cell"><span class="bar-track"><span class="bar-fill low" style="width:82%"></span></span>81.8%</div></td>
+            <td class="num">100%</td>
+            <td class="num">100%</td>
+            <td class="mono">12&ndash;14</td>
+          </tr>
+          <tr>
+            <td class="mono">detectors/file.detector.ts</td>
+            <td class="num">4</td>
+            <td class="num">100%</td>
+            <td><div class="cov-cell"><span class="bar-track"><span class="bar-fill" style="width:88%"></span></span>87.5%</div></td>
+            <td class="num">100%</td>
+            <td class="num">100%</td>
+            <td class="mono">14, 20</td>
+          </tr>
+          <tr>
+            <td class="mono">detectors/token.detector.ts</td>
+            <td class="num">4</td>
+            <td class="num">100%</td>
+            <td><div class="cov-cell"><span class="bar-track"><span class="bar-fill low" style="width:79%"></span></span>78.6%</div></td>
+            <td class="num">100%</td>
+            <td class="num">100%</td>
+            <td class="mono">12&ndash;15</td>
+          </tr>
+          <tr>
+            <td class="mono">engine/decision.engine.ts</td>
+            <td class="num">9</td>
+            <td class="num">100%</td>
+            <td><div class="cov-cell"><span class="bar-track"><span class="bar-fill" style="width:88%"></span></span>88.2%</div></td>
+            <td class="num">100%</td>
+            <td class="num">100%</td>
+            <td class="mono">28, 55</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section-note" style="margin-top:10px;">
+      Overall branch coverage sits at 81.1% &mdash; every uncovered branch is a <span class="mono-cell">rule.enabled === false</span> or <span class="mono-cell">config.enabled === false</span> short-circuit guard (kill-switches for disabling a rule/detector via JSON), not an untested code path in the detection logic itself.
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>API Integration &mdash; Newman (Postman collection)</h2>
+      <div class="section-note">25 requests &middot; 43 assertions &middot; 2.2s total &middot; avg 7ms (min 2ms, max 52ms)</div>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Request</th>
+            <th>Expected</th>
+            <th>Result</th>
+            <th class="num">Assertions</th>
+            <th class="num">Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="group-row"><td colspan="5">Detect &middot; PII</td></tr>
+          <tr><td>MASK &mdash; email + aadhaar</td><td class="mono">200 / MASK</td><td><span class="chip mask">MASK</span></td><td class="num">2/2</td><td class="num">52ms</td></tr>
+          <tr><td>ALLOW &mdash; clean text</td><td class="mono">200 / ALLOW</td><td><span class="chip pass">ALLOW</span></td><td class="num">2/2</td><td class="num">17ms</td></tr>
+          <tr><td>400 &mdash; missing text</td><td class="mono">400</td><td><span class="chip block">400</span></td><td class="num">1/1</td><td class="num">4ms</td></tr>
+
+          <tr class="group-row"><td colspan="5">Detect &middot; CII</td></tr>
+          <tr><td>MASK &mdash; codename + internal URL</td><td class="mono">200 / MASK</td><td><span class="chip mask">MASK</span></td><td class="num">2/2</td><td class="num">7ms</td></tr>
+          <tr><td>ALLOW &mdash; clean text</td><td class="mono">200 / ALLOW</td><td><span class="chip pass">ALLOW</span></td><td class="num">2/2</td><td class="num">5ms</td></tr>
+          <tr><td>400 &mdash; missing text</td><td class="mono">400</td><td><span class="chip block">400</span></td><td class="num">1/1</td><td class="num">5ms</td></tr>
+
+          <tr class="group-row"><td colspan="5">Detect &middot; Secret</td></tr>
+          <tr><td>BLOCK &mdash; OpenAI key</td><td class="mono">422 / BLOCK</td><td><span class="chip block">BLOCK</span></td><td class="num">2/2</td><td class="num">5ms</td></tr>
+          <tr><td>ALLOW &mdash; clean text</td><td class="mono">200 / ALLOW</td><td><span class="chip pass">ALLOW</span></td><td class="num">2/2</td><td class="num">4ms</td></tr>
+          <tr><td>400 &mdash; missing text</td><td class="mono">400</td><td><span class="chip block">400</span></td><td class="num">1/1</td><td class="num">5ms</td></tr>
+
+          <tr class="group-row"><td colspan="5">Detect &middot; Toxic</td></tr>
+          <tr><td>BLOCK &mdash; threats + harassment</td><td class="mono">422 / BLOCK</td><td><span class="chip block">BLOCK</span></td><td class="num">2/2</td><td class="num">7ms</td></tr>
+          <tr><td>ALLOW &mdash; low-severity profanity</td><td class="mono">200 / ALLOW</td><td><span class="chip pass">ALLOW</span></td><td class="num">2/2</td><td class="num">4ms</td></tr>
+          <tr><td>ALLOW &mdash; clean text</td><td class="mono">200 / ALLOW</td><td><span class="chip pass">ALLOW</span></td><td class="num">2/2</td><td class="num">4ms</td></tr>
+          <tr><td>400 &mdash; missing text</td><td class="mono">400</td><td><span class="chip block">400</span></td><td class="num">1/1</td><td class="num">4ms</td></tr>
+
+          <tr class="group-row"><td colspan="5">Detect &middot; Injection</td></tr>
+          <tr><td>BLOCK &mdash; ignore instructions + jailbreak</td><td class="mono">422 / BLOCK</td><td><span class="chip block">BLOCK</span></td><td class="num">2/2</td><td class="num">5ms</td></tr>
+          <tr><td>ALLOW &mdash; clean text</td><td class="mono">200 / ALLOW</td><td><span class="chip pass">ALLOW</span></td><td class="num">2/2</td><td class="num">3ms</td></tr>
+          <tr><td>400 &mdash; missing text</td><td class="mono">400</td><td><span class="chip block">400</span></td><td class="num">1/1</td><td class="num">2ms</td></tr>
+
+          <tr class="group-row"><td colspan="5">Detect &middot; File (multipart)</td></tr>
+          <tr><td>BLOCK &mdash; .exe disallowed</td><td class="mono">422 / BLOCK</td><td><span class="chip block">BLOCK</span></td><td class="num">2/2</td><td class="num">13ms</td></tr>
+          <tr><td>ALLOW &mdash; .csv allowed</td><td class="mono">200 / ALLOW</td><td><span class="chip pass">ALLOW</span></td><td class="num">2/2</td><td class="num">5ms</td></tr>
+
+          <tr class="group-row"><td colspan="5">Detect &middot; Token</td></tr>
+          <tr><td>BLOCK &mdash; exceeds gpt-3.5-turbo limit</td><td class="mono">422 / BLOCK</td><td><span class="chip block">BLOCK</span></td><td class="num">2/2</td><td class="num">3ms</td></tr>
+          <tr><td>ALLOW &mdash; normal text</td><td class="mono">200 / ALLOW</td><td><span class="chip pass">ALLOW</span></td><td class="num">2/2</td><td class="num">3ms</td></tr>
+          <tr><td>400 &mdash; missing text</td><td class="mono">400</td><td><span class="chip block">400</span></td><td class="num">1/1</td><td class="num">4ms</td></tr>
+
+          <tr class="group-row"><td colspan="5">Moderate &middot; Full Pipeline</td></tr>
+          <tr><td>BLOCK &mdash; mixed threats (pii+cii+secret+injection)</td><td class="mono">422 / BLOCK</td><td><span class="chip block">BLOCK</span></td><td class="num">2/2</td><td class="num">4ms</td></tr>
+          <tr><td>ALLOW &mdash; clean text</td><td class="mono">200 / ALLOW</td><td><span class="chip pass">ALLOW</span></td><td class="num">2/2</td><td class="num">4ms</td></tr>
+          <tr><td>ALLOW &mdash; text + valid file (multipart)</td><td class="mono">200 / ALLOW</td><td><span class="chip pass">ALLOW</span></td><td class="num">2/2</td><td class="num">8ms</td></tr>
+          <tr><td>400 &mdash; missing text and file</td><td class="mono">400</td><td><span class="chip block">400</span></td><td class="num">1/1</td><td class="num">4ms</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Notes &amp; Known Quirks</h2>
+    </div>
+    <div class="notes">
+      <div class="note">
+        <b>CII &mdash; internal_url regex stops at the domain.</b> <span class="mono-cell">https://intranet.testleaf.com/roadmap</span> masks only the domain, leaving <span class="mono-cell">/roadmap</span> exposed. Rule pattern has no path-segment matching; present since Phase 6, not introduced by this test run.
+      </div>
+      <div class="note">
+        <b>Toxic &mdash; naive substring matching produces false positives.</b> Keyword <span class="mono-cell">"hell"</span> matches inside <span class="mono-cell">"Hello"</span> because detection uses <span class="mono-cell">text.includes()</span> with no word-boundary check. Observed live during the Phase 13 <span class="mono-cell">/api/moderate</span> run.
+      </div>
+      <div class="note info">
+        <b>Winston file transport is buffered.</b> Force-killing the dev server (<span class="mono-cell">taskkill /F</span>) immediately after a request can truncate <span class="mono-cell">logs/moderation.log</span> before the write flushes. Re-verified with a graceful pause before shutdown &mdash; logging itself is correct, this is an artifact of how the test session tears the server down.
+      </div>
+      <div class="note info">
+        <b>Hot-reload confirmed under this run too.</b> Config loader keys its cache on file <span class="mono-cell">mtime</span>, so rule edits apply on the next request with no server restart.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>ai-shield-moderation &middot; jest.config.js + postman/AI-Shield.postman_collection.json</span>
+    <span>0 failures across both suites</span>
+  </footer>
+
+</div>
